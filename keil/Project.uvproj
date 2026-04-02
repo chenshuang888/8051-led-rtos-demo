@@ -34,7 +34,7 @@
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
-          <IncludePath></IncludePath>
+          <IncludePath>..\;..\os;..\bsp;..\obj;..\app</IncludePath>
           <LibPath></LibPath>
           <RegisterFilePath>Atmel\</RegisterFilePath>
           <DBRegisterFilePath>Atmel\</DBRegisterFilePath>
@@ -312,7 +312,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\;..\os;..\bsp;..\obj;..\app;..\config</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\;..\os;..\bsp;..\obj;..\app</IncludePath>
             </VariousControls>
           </Ax51>
           <Lx51>
@@ -362,57 +362,77 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>main</GroupName>
           <Files>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
+              <FilePath>..\main.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>os</GroupName>
+          <Files>
             <File>
               <FileName>os.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\os.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_timer0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\bsp_timer0.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\bsp_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\bsp_key.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\app_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\app_key.c</FilePath>
+              <FilePath>..\os\os.c</FilePath>
             </File>
             <File>
               <FileName>os_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\os_queue.c</FilePath>
+              <FilePath>..\os\os_queue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>bsp</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_timer0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_timer0.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>obj</GroupName>
+          <Files>
+            <File>
+              <FileName>key_obj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\obj\key_obj.c</FilePath>
             </File>
             <File>
               <FileName>led_obj.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\led_obj.c</FilePath>
+              <FilePath>..\obj\led_obj.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>app_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\app\app_key.c</FilePath>
             </File>
             <File>
-              <FileName>key_obj.c</FileName>
+              <FileName>app_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\key_obj.c</FilePath>
+              <FilePath>..\app\app_led.c</FilePath>
             </File>
           </Files>
         </Group>
