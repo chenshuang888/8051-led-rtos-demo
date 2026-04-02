@@ -2,7 +2,6 @@
 #define __LED_OBJ_H__
 
 #include "types.h"
-#include "app_key.h" /* key_msg_t / KEY_ACT_* */
 
 /*
  * led_obj.h
@@ -32,7 +31,6 @@ typedef enum
 } led_evt_id_t;
 
 /* key_id/action -> semantic event id */
-typedef u8 (*led_key_map_fn_t)(u8 key_id, u8 action);
 
 typedef void (*led_evt_cb_t)(struct led *s);
 
@@ -59,7 +57,6 @@ typedef struct led
         led_write_mask_fn_t write_mask;
 
         /* 输入映射（raw -> 语义），由应用层提供 */
-        led_key_map_fn_t map_key;
 
         /* 事件绑定表（语义 -> 回调），由应用层提供 */
         const led_evt_binding_t code *evt_bindings;
@@ -76,13 +73,13 @@ void led_bind_clock(led_t *s, led_now_ms_fn_t now_ms);
 void led_bind_output(led_t *s, led_write_mask_fn_t write_mask);
 
 /* 注入 raw key 映射函数：key_id/action -> LED_EVT_*。 */
-void led_bind_key_mapper(led_t *s, led_key_map_fn_t map_key);
 
 /* 注入语义事件处理表：LED_EVT_* -> callback（建议放 code 段）。 */
 void led_bind_event_handlers(led_t *s, const led_evt_binding_t code *bindings, u8 count);
 
 /* 喂入按键消息：内部做 raw->semantic->dispatch。 */
-void led_feed_key(led_t *s, const key_msg_t *msg);
+void led_feed_evt(led_t *s, u8 evt_id);
+/* NOTE: raw input (e.g. key_msg_t) -> LED_EVT_* mapping is done in app layer (app_led). */
 
 /* 主处理函数：内部用 now_ms() 自算 dt，推进 acc_ms，到点则输出一步。 */
 void led_handler(led_t *s);

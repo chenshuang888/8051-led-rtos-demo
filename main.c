@@ -3,9 +3,7 @@
 #include "os.h"
 #include "bsp_timer0.h"
 #include "app_key.h"
-
-void app_led_task(void);
-void app_led_init(void);
+#include "app_led.h"
 
 /*
  * main.c
@@ -22,9 +20,6 @@ void app_led_init(void);
 
 void main(void)
 {
-	/* P2 低电平点亮：上电先全置 1（全灭）。 */
-	P2 = 0xFF;
-
 	os_init();
 
 	app_key_init();

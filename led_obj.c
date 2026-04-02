@@ -95,7 +95,6 @@ void led_init(led_t *s)
        s->last_tick = 0;
        s->now_ms = 0;
        s->write_mask = 0;
-       s->map_key = 0;
        s->evt_bindings = 0;
        s->evt_binding_count = 0;
 }
@@ -139,11 +138,6 @@ void led_bind_output(led_t *s, led_write_mask_fn_t write_mask)
  * 输入：key_id + action（来自 app_key 的 key_msg_t）
  * 输出：LED_EVT_*（不关心则返回 LED_EVT_NONE）
  */
-void led_bind_key_mapper(led_t *s, led_key_map_fn_t map_key)
-{
-       s->map_key = map_key;
-}
-
 /*
  * 注入事件绑定表：evt_id -> callback。
  *
@@ -164,20 +158,13 @@ void led_bind_event_handlers(led_t *s, const led_evt_binding_t code *bindings, u
  * - 这里是“输入层”，只负责：raw -> semantic -> dispatch；
  * - 具体怎么改 led 状态，由 handlers 回调决定。
  */
-void led_feed_key(led_t *s, const key_msg_t *msg)
+void led_feed_evt(led_t *s, u8 evt_id)
 {
-       if (msg == 0 || s->map_key == 0)
+       if (s == 0)
        {
                return;
        }
-
-       {
-               u8 evt_id = s->map_key(msg->key_id, msg->action);
-               if (evt_id != LED_EVT_NONE)
-               {
-                       led_dispatch_evt(s, evt_id);
-               }
-       }
+       led_dispatch_evt(s, evt_id);
 }
 
 /*

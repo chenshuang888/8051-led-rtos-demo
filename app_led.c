@@ -1,5 +1,6 @@
 #include <REGX52.H>
 
+#include "app_led.h"
 #include "app_key.h"
 #include "bsp_timer0.h"
 #include "led_obj.h"
@@ -56,13 +57,18 @@ static const key_to_led_map_t code s_keymap[] = {
  * - LED 框架不应该“认识具体按键含义”，它只认识语义事件；
  * - 语义映射由应用层决定（更像 LVGL：indev -> event）。
  */
-static u8 map_key_to_led_evt(u8 key_id, u8 action)
+static u8 app_led_map_from_key(const key_msg_t *msg)
 {
 	u8 i;
 
+	if (msg == 0)
+	{
+		return LED_EVT_NONE;
+	}
+
 	for (i = 0; i < (u8)(sizeof(s_keymap) / sizeof(s_keymap[0])); i++)
 	{
-		if (s_keymap[i].key_id == key_id && s_keymap[i].action == action)
+		if (s_keymap[i].key_id == msg->key_id && s_keymap[i].action == msg->action)
 		{
 			return s_keymap[i].evt_id;
 		}
@@ -144,18 +150,20 @@ static void led_write_mask_p2(u8 logical_mask)
  * 这里做三件事（对应 LVGL 的“驱动注入”思想）：
  * 1) 初始化对象默认状态（周期/方向/running 等）
  * 2) 注入时钟源：now_ms()（本工程用 os_tick_now）
- * 3) 注入输出与事件系统：write_mask / map_key / handlers
+ * 3) 注入输出与事件系统：write_mask / handlers
  */
 void app_led_init(void)
 {
+	/* P2 低电平点亮：上电先全置 1（全灭）。 */
+	P2 = 0xFF;
+
 	led_init(&g_led);
 
 	/* 注入时钟源：让框架内部用 now_ms() 自己算 dt。 */
 	led_bind_clock(&g_led, os_tick_now);
 	/* 注入输出：框架只生成 logical_mask，最终怎么写硬件由这里决定。 */
 	led_bind_output(&g_led, led_write_mask_p2);
-	/* 注入按键语义映射：raw key -> LED_EVT_* */
-	led_bind_key_mapper(&g_led, map_key_to_led_evt);
+	
 	/* 注入事件回调绑定表：LED_EVT_* -> callback */
 	led_bind_event_handlers(&g_led, s_led_handlers, (u8)(sizeof(s_led_handlers) / sizeof(s_led_handlers[0])));
 }
@@ -174,11 +182,16 @@ void app_led_init(void)
 void app_led_task(void)
 {
 	key_msg_t msg;
+	u8 evt_id;
 
 	/* 1) 读空按键队列：把所有输入消息喂给 LED 对象（事件分发在框架里做）。 */
 	while (os_queue_recv(&g_key_queue, &msg))
 	{
-		led_feed_key(&g_led, &msg);
+		evt_id = app_led_map_from_key(&msg);
+		if (evt_id != LED_EVT_NONE)
+		{
+			led_feed_evt(&g_led, evt_id);
+		}
 	}
 
 	/* 2) 推进 LED 对象：根据 now_ms() 的 dt 自动步进，必要时输出到硬件。 */
