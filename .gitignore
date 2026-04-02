@@ -1,0 +1,42 @@
+# Keil uVision / C51 (based on current project layout)
+Objects/
+Listings/
+
+# User-specific IDE settings (should not be versioned)
+*.uvopt
+*.uvoptx
+*.uvgui*
+*.uvguix
+
+# Keil build outputs / intermediate files
+*.obj
+*.lst
+*.m51
+*.hex
+*.map
+*.lnp
+*.axf
+*.elf
+*.bin
+*.d
+*.dep
+*.crf
+*.o
+*.omf
+*.cod
+*.sct
+*.build_log.htm
+
+# Common editor / OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*.tmp
+*.bak
+*.~*
+
+# IDE folders
+.vscode/
+.idea/
