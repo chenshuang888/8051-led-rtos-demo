@@ -24,11 +24,22 @@ void key_obj_init(key_obj_t *o)
 		return;
 	}
 
+	o->read_mask = 0;
+
 	for (i = 0; i < KEY_OBJ_NUM; i++)
 	{
 		o->state[i] = KEY_ST_UP;
 		o->hold_ticks[i] = 0;
 	}
+}
+
+void key_obj_attach_reader(key_obj_t *o, key_read_mask_fn_t fn)
+{
+	if (o == 0)
+	{
+		return;
+	}
+	o->read_mask = fn;
 }
 
 bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, u8 *out_action)
@@ -102,6 +113,35 @@ bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, u8 *out_action)
 	default:
 		o->state[key_id] = KEY_ST_UP;
 		break;
+	}
+
+	return 0;
+}
+
+bit key_obj_poll(key_obj_t *o, u8 *out_key_id, u8 *out_action)
+{
+	u8 i;
+	u8 mask;
+
+	if (o == 0 || out_key_id == 0 || out_action == 0)
+	{
+		return 0;
+	}
+	if (o->read_mask == 0)
+	{
+		return 0;
+	}
+
+	mask = o->read_mask();
+
+	for (i = 0; i < KEY_OBJ_NUM; i++)
+	{
+		u8 pressed = (u8)((mask >> i) & 0x01);
+		if (key_obj_update(o, i, pressed, out_action))
+		{
+			*out_key_id = i;
+			return 1;
+		}
 	}
 
 	return 0;

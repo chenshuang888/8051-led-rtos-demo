@@ -24,6 +24,12 @@ static key_obj_t s_key_obj;
 static key_msg_t s_storage[KEY_MSG_Q_LEN];
 os_queue_t g_key_queue;
 
+static u8 app_key_read_mask(void)
+{
+	/* bit i = 1 表示 Ki 当前按下（已在 BSP 内做 active-low 反相）。 */
+	return bsp_key_read_mask();
+}
+
 void app_key_init(void)
 {
 	/* BSP：配置 P3.0~P3.3 为输入（准双向口写 1）。 */
@@ -31,6 +37,7 @@ void app_key_init(void)
 
 	/* 框架：初始化去抖/长按状态机。 */
 	key_obj_init(&s_key_obj);
+	key_obj_attach_reader(&s_key_obj, app_key_read_mask);
 
 	/* OS：初始化按键消息队列。 */
 	os_queue_init(&g_key_queue, s_storage, sizeof(key_msg_t), KEY_MSG_Q_LEN);
@@ -38,26 +45,22 @@ void app_key_init(void)
 
 void app_key_task(void)
 {
-	u8 i;
-	u8 pressed_mask;
+	u8 key_id;
 	u8 action;
 
-	/* bit i = 1 表示 Ki 当前按下（已在 BSP 内做 active-low 反相）。 */
-	pressed_mask = bsp_key_read_mask();
-
-	for (i = 0; i < KEY_OBJ_NUM; i++)
+	/* 读空本周期内产生的所有事件：一次 poll 最多吐出一个事件。 */
+	while (key_obj_poll(&s_key_obj, &key_id, &action))
 	{
-		u8 pressed = (u8)((pressed_mask >> i) & 0x01);
+		key_msg_t msg;
+		msg.key_id = key_id;
+		msg.action = action;
+		(void)os_queue_send(&g_key_queue, &msg);
+	}
+
+	/* bit i = 1 表示 Ki 当前按下（已在 BSP 内做 active-low 反相）。 */
+
 
 		/* 框架层输出事件后，由应用层负责入队。 */
-		if (key_obj_update(&s_key_obj, i, pressed, &action))
-		{
-			key_msg_t msg;
-			msg.key_id = i;
-			msg.action = action;
 
 			/* 非阻塞发送：若满则丢弃，overflow 由队列内部记录。 */
-			(void)os_queue_send(&g_key_queue, &msg);
-		}
-	}
 }
