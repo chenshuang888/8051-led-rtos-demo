@@ -23,9 +23,9 @@
 
 - **LED**：接在 `P2.0 ~ P2.7`，并且 **低电平点亮**（active-low）
 - **按键**：接在 `P3.0 ~ P3.3`，并且 **低电平有效**（按下读到 0）
-- 晶振频率默认按 `config.h` 的 `FOSC_HZ` 配置（本工程默认 24MHz）
+- 晶振频率默认按 `config/config.h` 的 `FOSC_HZ` 配置（本工程默认 24MHz）
 
-如果你的板子晶振不是 24MHz，请优先修改 `config.h` 中的 `FOSC_HZ`，否则 Timer0 的 1ms tick 会不准。
+如果你的板子晶振不是 24MHz，请优先修改 `config/config.h` 中的 `FOSC_HZ`，否则 Timer0 的 1ms tick 会不准。
 
 ---
 
@@ -56,8 +56,9 @@
 ├─ obj/                  # 框架/对象层：状态机、对象、handler（不碰硬件）
 ├─ app/                  # 应用层：粘合、语义映射、组装消息、业务策略
 ├─ main.c                # 入口：初始化 + 创建任务 + while(1) 调度
-├─ config.h              # 时钟/定时器相关配置
-└─ types.h               # u8/u16/bit 等基础类型
+└─ config/               # 全局配置与基础类型
+   ├─ config.h           # 时钟/定时器相关配置
+   └─ types.h            # u8/u16/bit 等基础类型
 ```
 
 ### 分层原则（很重要）
@@ -203,4 +204,3 @@
 - `Objects/`、`Listings/` 也建议忽略（编译产物）。
 
 （如果你需要，我可以补一份适合 GitHub 的 `.gitignore` 模板。）
-
