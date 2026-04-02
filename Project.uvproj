@@ -385,6 +385,11 @@
               <FilePath>.\bsp_led.c</FilePath>
             </File>
             <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp_key.c</FilePath>
+            </File>
+            <File>
               <FileName>app_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\app_led.c</FilePath>
@@ -403,6 +408,11 @@
               <FileName>led_obj.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\led_obj.c</FilePath>
+            </File>
+            <File>
+              <FileName>key_obj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\key_obj.c</FilePath>
             </File>
           </Files>
         </Group>
