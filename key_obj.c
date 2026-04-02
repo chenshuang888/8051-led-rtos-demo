@@ -31,9 +31,9 @@ void key_obj_init(key_obj_t *o)
 	}
 }
 
-bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, key_msg_t *out)
+bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, u8 *out_action)
 {
-	if (o == 0 || out == 0)
+	if (o == 0 || out_action == 0)
 	{
 		return 0;
 	}
@@ -82,14 +82,13 @@ bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, key_msg_t *out)
 			/* 稳定释放确认：输出一次事件。 */
 			o->state[key_id] = KEY_ST_UP;
 
-			out->key_id = key_id;
 			if (o->hold_ticks[key_id] >= (u8)KEY_LONG_TICKS)
 			{
-				out->action = KEY_ACT_LONG;
+				*out_action = (u8)KEY_ACT_LONG;
 			}
 			else
 			{
-				out->action = KEY_ACT_CLICK;
+				*out_action = (u8)KEY_ACT_CLICK;
 			}
 			return 1;
 		}
@@ -107,4 +106,3 @@ bit key_obj_update(key_obj_t *o, u8 key_id, u8 pressed, key_msg_t *out)
 
 	return 0;
 }
-

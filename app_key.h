@@ -2,8 +2,8 @@
 #define __APP_KEY_H__
 
 #include "types.h"
-#include "key_types.h"
 #include "os_queue.h"
+#include "key_obj.h"
 
 /*
  * app_key.h
@@ -46,6 +46,16 @@ void app_key_task(void);
  * - 它只在“确认释放”时输出一次事件，这样就能带上按压时长信息
  *   （CLICK / LONG）。
  */
+/*
+ * Key message queue.
+ * Messages are emitted on stable release only: CLICK or LONG.
+ */
+typedef struct
+{
+	u8 key_id;  /* 0..3 => P3.0..P3.3 */
+	u8 action;  /* key_action_t (KEY_ACT_*) */
+} key_msg_t;
+
 /* Expose the queue handle (FreeRTOS QueueHandle_t style). */
 extern os_queue_t g_key_queue;
 
