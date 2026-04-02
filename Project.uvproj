@@ -380,6 +380,11 @@
               <FilePath>.\bsp_timer0.c</FilePath>
             </File>
             <File>
+              <FileName>bsp_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp_led.c</FilePath>
+            </File>
+            <File>
               <FileName>app_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\app_led.c</FilePath>

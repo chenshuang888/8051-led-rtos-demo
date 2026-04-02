@@ -1,8 +1,7 @@
-#include <REGX52.H>
-
 #include "app_led.h"
 #include "app_key.h"
 #include "bsp_timer0.h"
+#include "bsp_led.h"
 #include "led_obj.h"
 #include "os_queue.h"
 
@@ -132,17 +131,17 @@ static const led_evt_binding_t code s_led_handlers[] = {
  * - 低电平点亮（active-low）
  * 因此：P2 = ~logical_mask
  */
+#if 0
 static void led_write_mask_p2(u8 logical_mask)
 {
-	u8 p2_val;
 
 	/*
 	 * logical_mask: bit i=1 表示第 i 个灯亮。
 	 * 硬件为低电平点亮，所以需要取反后写到 P2。
 	 */
-	p2_val = (u8)(~logical_mask);
-	P2 = p2_val;
+	bsp_led_write_mask(logical_mask);
 }
+#endif
 
 /*
  * LED 应用层初始化。
@@ -155,14 +154,14 @@ static void led_write_mask_p2(u8 logical_mask)
 void app_led_init(void)
 {
 	/* P2 低电平点亮：上电先全置 1（全灭）。 */
-	P2 = 0xFF;
+	bsp_led_init();
 
 	led_init(&g_led);
 
 	/* 注入时钟源：让框架内部用 now_ms() 自己算 dt。 */
 	led_bind_clock(&g_led, os_tick_now);
 	/* 注入输出：框架只生成 logical_mask，最终怎么写硬件由这里决定。 */
-	led_bind_output(&g_led, led_write_mask_p2);
+	led_bind_output(&g_led, bsp_led_write_mask);
 	
 	/* 注入事件回调绑定表：LED_EVT_* -> callback */
 	led_bind_event_handlers(&g_led, s_led_handlers, (u8)(sizeof(s_led_handlers) / sizeof(s_led_handlers[0])));
