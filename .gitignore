@@ -1,6 +1,8 @@
 # Keil uVision / C51 (based on current project layout)
 Objects/
 Listings/
+keil/Objects/
+keil/Listings/
 
 # User-specific IDE settings (should not be versioned)
 *.uvopt

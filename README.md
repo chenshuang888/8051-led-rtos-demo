@@ -204,3 +204,9 @@
 - `Objects/`、`Listings/` 也建议忽略（编译产物）。
 
 （如果你需要，我可以补一份适合 GitHub 的 `.gitignore` 模板。）
+
+---
+
+## License
+
+MIT License. See `LICENSE`.

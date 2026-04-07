@@ -8,7 +8,7 @@
  *
  * 按键应用层（glue）：
  * - BSP：读取 P3.0~P3.3 的原始按下状态（bsp_key_read_mask）
- * - 框架：去抖 + 长按识别（key_obj_update）
+ * - OBJ：去抖 + 长按识别（key_obj_update）
  * - 输出：把 key_msg_t {key_id, action} 投递到 g_key_queue（os_queue_send）
  *
  * 说明：
@@ -35,7 +35,7 @@ void app_key_init(void)
 	/* BSP：配置 P3.0~P3.3 为输入（准双向口写 1）。 */
 	bsp_key_init();
 
-	/* 框架：初始化去抖/长按状态机。 */
+	/* OBJ：初始化去抖/长按状态机。 */
 	key_obj_init(&s_key_obj);
 	key_obj_attach_reader(&s_key_obj, app_key_read_mask);
 
@@ -56,11 +56,5 @@ void app_key_task(void)
 		msg.action = action;
 		(void)os_queue_send(&g_key_queue, &msg);
 	}
-
-	/* bit i = 1 表示 Ki 当前按下（已在 BSP 内做 active-low 反相）。 */
-
-
-		/* 框架层输出事件后，由应用层负责入队。 */
-
-			/* 非阻塞发送：若满则丢弃，overflow 由队列内部记录。 */
 }
+
