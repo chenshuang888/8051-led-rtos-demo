@@ -39,7 +39,8 @@ static const key_to_led_map_t code s_keymap[] = {
 	{0, KEY_ACT_CLICK, LED_EVT_TOGGLE_DIR},
 	{1, KEY_ACT_CLICK, LED_EVT_SPEED_UP},
 	{2, KEY_ACT_CLICK, LED_EVT_SPEED_DOWN},
-	{3, KEY_ACT_CLICK, LED_EVT_TOGGLE_RUN},
+	{3, KEY_ACT_CLICK, LED_EVT_TOGGLE_MODE},
+	{3, KEY_ACT_LONG, LED_EVT_TOGGLE_RUN},
 };
 
 /*
@@ -100,6 +101,18 @@ static void on_speed_down(led_t *s)
 }
 
 /* K3: 暂停/恢复；暂停时保持 last_tick 更新以避免恢复后突跳 */
+/* K3: 切换显示模式（单灯流水/相邻双灯流水） */
+static void on_toggle_mode(led_t *s)
+{
+	s->pair_mode = (u8)(!s->pair_mode);
+
+	/* 进入/切换模式时，从 D1 开始更直观 */
+	s->idx = 0;
+
+	/* 让下一次 handler 尽快输出一次新模式 */
+	s->acc_ms = s->period_ms;
+}
+
 static void on_toggle_run(led_t *s)
 {
 	s->running = (u8)(!s->running);
@@ -117,6 +130,7 @@ static const led_evt_binding_t code s_led_handlers[] = {
 	{LED_EVT_TOGGLE_DIR, on_toggle_dir},
 	{LED_EVT_SPEED_UP, on_speed_up},
 	{LED_EVT_SPEED_DOWN, on_speed_down},
+	{LED_EVT_TOGGLE_MODE, on_toggle_mode},
 	{LED_EVT_TOGGLE_RUN, on_toggle_run},
 };
 
